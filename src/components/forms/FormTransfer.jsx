@@ -5,7 +5,7 @@ import {db} from "@/lib/db.js";
 import {FormInput} from "@/components/forms/fields/FormInput.jsx";
 import PropTypes from "prop-types";
 import {z} from "zod";
-import {useInventoryContext} from "@/context/InventoryContext.jsx";
+import {useWarehouseItemContext} from "@/context/WarehouseItemContext.jsx";
 import {FormDateInput} from "@/components/forms/fields/FormDateInput.jsx";
 import {v4 as uuid4} from "uuid";
 import ActionTypes from "@/lib/actionTypes.js";
@@ -16,7 +16,7 @@ FormTransfer.propTypes = {
 }
 
 export default function FormTransfer({isOpen, onOpenChange}) {
-    const item = useInventoryContext()
+    const item = useWarehouseItemContext()
     const form = useForm({
         resolver: zodResolver(z.object({
             employer: z.string().min(1, {message: 'Обязательное поле'}),
@@ -34,7 +34,8 @@ export default function FormTransfer({isOpen, onOpenChange}) {
 
     async function submit(data) {
         const {employer, count, date} = data
-        db.inventory.update(item.id, {
+        db.warehouse.update(item.id, {
+            decrement: item.decrement + count,
             history: [...item.history, {
                 id: uuid4(),
                 employer,
@@ -53,6 +54,9 @@ export default function FormTransfer({isOpen, onOpenChange}) {
                 form={form}
                 name={'employer'} label={'Сотрудник'}
                 placeholder="ФИО"/>
+            {/*<ComboboxForm form={form}*/}
+            {/*    name={'employer'} label={'Сотрудник'}*/}
+            {/*    placeholder="ФИО" values={}/>*/}
             <FormInput
                 form={form}
                 name={'count'} label={'Количество'}

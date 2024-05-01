@@ -19,7 +19,7 @@ FormDelete.propTypes = {
 
 export default function FormDelete({id, isOpen, onOpenChange}) {
     function onDelete() {
-        db.inventory.delete(id)
+        db.warehouse.delete(id)
     }
 
     return (

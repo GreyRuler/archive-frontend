@@ -1,5 +1,8 @@
 import Dexie from 'dexie';
 
+const DB_NAME = 'warehouse'
+const DB_VERSION = 1
+
 // const warehousesColumns = [
 //     "++id",
 //     "name",
@@ -20,14 +23,15 @@ import Dexie from 'dexie';
 //     "name",
 // ].join(', ')
 
-const inventoryColumns = [
+const warehouseColumns = [
     "++id",
     "warehouse",
     "itemNumber",
     "itemNumberOld",
     "name",
-    "initialCount",
-    // "count",
+    "amount",
+    "decrement",
+    "difference",
     "unit",
     "date",
     "metals",
@@ -35,9 +39,9 @@ const inventoryColumns = [
     "isArchived",
 ].join(', ')
 
-export const db = new Dexie('consolidatedWarehouse');
-db.version(1).stores({
-    inventory: inventoryColumns,
+export const db = new Dexie(DB_NAME);
+db.version(DB_VERSION).stores({
+    warehouse: warehouseColumns,
     // warehouses: warehousesColumns,
     // preciousMetals: preciousMetalsColumns,
     // units: unitsColumns,

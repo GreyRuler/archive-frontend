@@ -1,47 +1,63 @@
-import MultiselectForm from "@/components/forms/fields/MultiselectForm.jsx";
-import {Form} from "@/components/ui/form.jsx";
-import {useForm} from "react-hook-form";
-import {zodResolver} from "@hookform/resolvers/zod";
-import {z} from "zod";
-import {Button} from "@/components/ui/button.jsx";
+import React, {useMemo} from 'react';
+import {getCoreRowModel, getSortedRowModel, useReactTable,} from '@tanstack/react-table';
+import {Table, TableBody, TableCell, TableHead, TableRow} from "@/components/ui/table.jsx";
 
-export const formSchema = z.object({
-    preciousMetals: z.object({
-        name: z.string(),
-        value: z.number(),
-    }).array(),
-}).required()
+// Макет данных для демонстрации
+const defaultData = [
+    { name: "Item 1", received: 100, remaining: 50, expense: 50, other: "Other Info" },
+    { name: "Item 2", received: 200, remaining: 150, expense: 50, other: "Other Info" },
+    // Добавьте больше данных по мере необходимости
+];
 
-export default function TestPage() {
-    const values = [
-        'Золото',
-        'Серебро',
-        'Цинк',
-        'Медь',
-    ]
-
-    const form = useForm({
-        resolver: zodResolver(formSchema),
-        defaultValues: {
-            preciousMetals: [
-                {
-                    name: "Золото",
-                    value: 10,
-                }
-            ]
+const DataTable = ({ data = defaultData }) => {
+    const columns = useMemo(() => [
+        {
+            accessorKey: 'name',
+            header: 'Name',
+            footer: 'Name',
+            colSpan: 3, // Или другое значение в зависимости от структуры
+            rowSpan: 2 // Или другое значение в зависимости от структуры
         },
-    })
+    ], []);
 
-    const onSubmit = (data) => {
-        console.log(data)
-    }
+    const table = useReactTable({
+        columns,
+        data,
+        getCoreRowModel: getCoreRowModel(),
+        getSortedRowModel: getSortedRowModel(),
+    });
 
     return (
-        <Form {...form}>
-            <form onSubmit={form.handleSubmit(onSubmit)}>
-                <MultiselectForm form={form} name={'preciousMetals'} label={'Выбор металлов'} placeholder={'Нажмите для выбора'} values={values}/>
-                <Button variant="secondary" type="submit">Submit</Button>
-            </form>
-        </Form>
+        <div className="min-h-screen bg-gray-100 p-4">
+            <Table>
+                <TableHead>
+                    {table.getHeaderGroups().map(headerGroup => (
+                        <TableRow key={headerGroup.id}>
+                            {headerGroup.headers.map(header => (
+                                console.log(header)
+                            ))}
+                        </TableRow>
+                    ))}
+                </TableHead>
+                <TableBody>
+                    {table.getRowModel().rows.map(row => (
+                        <TableRow key={row.id}>
+                            {row.getVisibleCells().map(cell => (
+                                <TableCell key={cell.id}>
+                                    {cell.renderCell()}
+                                </TableCell>
+                            ))}
+                        </TableRow>
+                    ))}
+                </TableBody>
+            </Table>
+        </div>
+    );
+};
+
+export default function TestPage() {
+
+    return (
+        <DataTable/>
     )
 }

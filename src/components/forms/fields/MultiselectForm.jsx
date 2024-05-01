@@ -1,5 +1,5 @@
 import PropTypes from "prop-types";
-import {FormControl, FormDescription, FormField, FormItem, FormLabel, FormMessage} from "@/components/ui/form.jsx";
+import {FormControl, FormDescription, FormField, FormItem, FormMessage} from "@/components/ui/form.jsx";
 import {Command, CommandEmpty, CommandGroup, CommandInput} from "@/components/ui/command.jsx";
 import {cn} from "@/lib/utils.js";
 import {Badge} from "@/components/ui/badge"
@@ -13,12 +13,11 @@ MultiselectForm.propTypes = {
     name: PropTypes.string,
     label: PropTypes.string,
     type: PropTypes.string,
-    placeholder: PropTypes.string,
     description: PropTypes.string,
-    values: PropTypes.arrayOf(PropTypes.string),
+    list: PropTypes.arrayOf(PropTypes.string),
 }
 
-export default function MultiselectForm({name, label, placeholder, description, values}) {
+export default function MultiselectForm({name, description, list}) {
     const {setValue, control} = useFormContext()
 
     return (
@@ -31,7 +30,6 @@ export default function MultiselectForm({name, label, placeholder, description, 
                     setValue(name, field.value.filter(item => item.name !== value));
                 }
                 return <FormItem className="flex flex-col">
-                    <FormLabel>{label}</FormLabel>
                     <Popover>
                         <PopoverTrigger asChild>
                             <FormControl>
@@ -41,16 +39,16 @@ export default function MultiselectForm({name, label, placeholder, description, 
                                     role="combobox"
                                     className={cn(
                                         "focus-visible:outline-0",
-                                        "min-h-[100px] border rounded-md flex p-4 gap-1 flex-wrap",
+                                        "h-full min-h-[100px] border rounded-md flex p-4 gap-1 flex-wrap",
                                         !field.value.length && "text-muted-foreground"
                                     )}
                                 >
-                                    {!field.value.length ? placeholder
+                                    {!field.value.length ? 'Нажмите для выбора'
                                         : field.value.map((item) => <Badge key={uuidv4()} onClick={(e) => {
                                             e.stopPropagation();
                                             onDelete(item.name)
                                         }}>
-                                            {item.name} {item.value}
+                                            {item.name}<br/>{item.value}
                                         </Badge>)}
                                 </Button>
                             </FormControl>
@@ -64,7 +62,7 @@ export default function MultiselectForm({name, label, placeholder, description, 
                                 />
                                 <CommandEmpty>Металл не найден</CommandEmpty>
                                 <CommandGroup className="first:mb-1">
-                                    {values.filter(item => !selectedNames.includes(item)).map((item) => (
+                                    {list.filter(item => !selectedNames.includes(item)).map((item) => (
                                         <MultiselectItem key={uuidv4()} item={item} items={field.value} fieldName={name}
                                                          nameInput={uuidv4()}/>
                                     ))}

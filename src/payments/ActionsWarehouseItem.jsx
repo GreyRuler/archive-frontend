@@ -2,29 +2,26 @@ import {
     DropdownMenu,
     DropdownMenuContent,
     DropdownMenuItem,
-    DropdownMenuLabel,
     DropdownMenuSeparator,
     DropdownMenuTrigger
 } from "@/components/ui/dropdown-menu.jsx";
 import {Button} from "@/components/ui/button.jsx";
 import {MoreHorizontal} from "lucide-react";
-import {FormEdit} from "@/components/forms/FormEdit.jsx";
 import {Fragment, useState} from "react";
 import {db} from "@/lib/db.js";
 import FormTransfer from "@/components/forms/FormTransfer.jsx";
-import {useInventoryContext} from "@/context/InventoryContext.jsx";
+import {useWarehouseItemContext} from "@/context/WarehouseItemContext.jsx";
 import History from "@/components/history/History.jsx";
 import FormDeduct from "@/components/forms/FormDeduct.jsx";
 
-export function ActionsInventory() {
-    const [editOpen, setEditOpen] = useState(false)
+export function ActionsWarehouseItem() {
     const [transferOpen, setTransferOpen] = useState(false)
     const [deductOpen, setDeductOpen] = useState(false)
     const [historyOpen, setHistoryOpen] = useState(false)
-    const {id, history} = useInventoryContext()
+    const {id, history} = useWarehouseItemContext()
 
     function onArchive () {
-        db.inventory.update(id, {
+        db.warehouse.update(id, {
             isArchived: 1
         })
     }
@@ -39,10 +36,6 @@ export function ActionsInventory() {
                     </Button>
                 </DropdownMenuTrigger>
                 <DropdownMenuContent align="end">
-                    <DropdownMenuLabel>Действия</DropdownMenuLabel>
-                    <DropdownMenuItem onClick={() => setEditOpen(true)}>
-                        Редактировать
-                    </DropdownMenuItem>
                     <DropdownMenuItem onClick={onArchive}>
                         Архивировать
                     </DropdownMenuItem>
@@ -53,7 +46,6 @@ export function ActionsInventory() {
                     <DropdownMenuItem onClick={() => setHistoryOpen(true)}>История</DropdownMenuItem>
                 </DropdownMenuContent>
             </DropdownMenu>
-            <FormEdit isOpen={editOpen} onOpenChange={setEditOpen}/>
             <FormTransfer isOpen={transferOpen} onOpenChange={setTransferOpen}/>
             <FormDeduct isOpen={deductOpen} onOpenChange={setDeductOpen}/>
             <History isOpen={historyOpen} onOpenChange={setHistoryOpen} history={history}/>

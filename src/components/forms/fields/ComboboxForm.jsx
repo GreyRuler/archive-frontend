@@ -1,8 +1,5 @@
 import {FormControl, FormDescription, FormField, FormItem, FormLabel, FormMessage} from "@/components/ui/form.jsx";
-import {CaretSortIcon, CheckIcon} from "@radix-ui/react-icons";
-import {
-    Command, CommandEmpty, CommandGroup, CommandInput, CommandItem, CommandList
-} from "@/components/ui/command";
+import {Command, CommandEmpty, CommandGroup, CommandInput, CommandItem, CommandList} from "@/components/ui/command";
 import PropTypes from "prop-types";
 import {useState} from "react";
 import {cn} from "@/lib/utils.js";
@@ -37,7 +34,7 @@ export default function ComboboxForm({form, name, label, placeholder, type, desc
                                 onInput={(e) => form.setValue(name, e.nativeEvent.target.value)}
                                 placeholder={placeholder} type={type} {...field}
                                 className={cn(
-                                    "flex h-9 w-full rounded-md border border-input bg-transparent px-3 py-1 text-sm shadow-sm transition-colors file:border-0 file:bg-transparent file:text-sm file:font-medium placeholder:text-muted-foreground disabled:cursor-not-allowed disabled:opacity-50",
+                                    "flex h-9 w-full rounded-md border border-input bg-transparent px-3 py-1 text-sm-sm transition-colors file:border-0 file:bg-transparent file:text-sm file:font-medium placeholder:text-muted-foreground disabled:cursor-not-allowed disabled:opacity-50",
                                     open ? "rounded-b-none focus-visible:ring-1 focus-visible:ring-ring" : "focus-visible:outline-0"
                                 )}
                             />

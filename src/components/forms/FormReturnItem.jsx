@@ -10,7 +10,7 @@ import PropTypes from "prop-types";
 import {db} from "@/lib/db.js";
 import {v4 as uuid4} from "uuid";
 import ActionTypes from "@/lib/actionTypes.js";
-import {useInventoryContext} from "@/context/InventoryContext.jsx";
+import {useWarehouseItemContext} from "@/context/WarehouseItemContext.jsx";
 import {FormDateInput} from "@/components/forms/fields/FormDateInput.jsx";
 
 FormReturnItem.propTypes = {
@@ -20,7 +20,7 @@ FormReturnItem.propTypes = {
 }
 
 export default function FormReturnItem({historyId, delta, employer}) {
-    const {id, history} = useInventoryContext()
+    const {id, history, decrement} = useWarehouseItemContext()
     const deltaPos = Math.abs(delta)
     const form = useForm({
         resolver: zodResolver(z.object({
@@ -36,7 +36,8 @@ export default function FormReturnItem({historyId, delta, employer}) {
 
     const onSubmit = (data) => {
         const {delta, date} = data
-        db.inventory.update(id, {
+        db.warehouse.update(id, {
+            decrement: decrement - delta,
             history: [...history, {
                 id: uuid4(),
                 employer,

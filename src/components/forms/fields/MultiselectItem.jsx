@@ -4,7 +4,6 @@ import {zodResolver} from "@hookform/resolvers/zod";
 import {z} from "zod";
 import {CommandItem} from "@/components/ui/command.jsx";
 import {Input} from "@/components/ui/input.jsx";
-import {cn} from "@/lib/utils.js";
 
 
 MultiselectItem.propTypes = {
@@ -18,10 +17,11 @@ export default function MultiselectItem({item, items, fieldName, nameInput}) {
     const {setValue} = useFormContext()
     const {register, handleSubmit, formState: {errors}} = useForm({
         resolver: zodResolver(z.object({
-            [nameInput]: z.coerce.number().min(1, {message: 'Обязательное поле'})
+            [nameInput]: z.coerce.number().min(0.0000001, {message: 'Обязательное поле'})
         })),
     })
     const onSubmit = (data) => {
+        console.log(data)
         setValue(fieldName, [...items, {
             name: item,
             value: data[nameInput]
@@ -34,19 +34,18 @@ export default function MultiselectItem({item, items, fieldName, nameInput}) {
                 <CommandItem
                     value={item}
                     onSelect={handleSubmit(onSubmit)}
-                    className="w-[600px] text-sm rounded-r-none px-4 whitespace-no-wrap border border-r-0"
+                    className="justify-between w-[600px] text-sm p-0 pl-4 whitespace-no-wrap border cursor-pointer"
                 >
                     {item}
+                    <Input
+                        onClick={(e) => e.stopPropagation()}
+                        {...register(nameInput)}
+                        type="number"
+                        step="0.00001"
+                        min="0.00001"
+                        className={"border-0 border-l-[1px] rounded-none focus-visible:ring-0 w-28"}
+                    />
                 </CommandItem>
-                <Input
-                    {...register(nameInput)}
-                    type="number"
-                    min="1"
-                    className={cn(
-                        "shadow-none rounded-l-none focus-visible:ring-0",
-                        errors[nameInput] && "border-red-500"
-                    )}
-                />
             </div>
             <p className="text-right text-[0.8rem] font-medium text-destructive">{errors[nameInput]?.message}</p>
         </div>

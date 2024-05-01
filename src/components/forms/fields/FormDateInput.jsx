@@ -1,4 +1,4 @@
-import {FormControl, FormDescription, FormField, FormItem, FormLabel, FormMessage} from "@/components/ui/form.jsx";
+import {FormControl, FormDescription, FormField, FormItem, FormMessage} from "@/components/ui/form.jsx";
 import {Popover, PopoverContent, PopoverTrigger} from "@/components/ui/popover.jsx";
 import {Button} from "@/components/ui/button.jsx";
 import {cn} from "@/lib/utils.js";
@@ -6,22 +6,21 @@ import {CalendarIcon} from "lucide-react";
 import {Calendar} from "@/components/ui/calendar"
 import PropTypes from "prop-types";
 import {formatDate} from "@/lib/format.js";
+import {useFormContext} from "react-hook-form";
 
 FormDateInput.propTypes = {
-    form: PropTypes.object,
     name: PropTypes.string,
-    label: PropTypes.string,
     description: PropTypes.string
 };
 
-export function FormDateInput({form, name, label, description}) {
+export function FormDateInput({name, description}) {
+    const {control} = useFormContext()
     return (
         <FormField
-            control={form.control}
+            control={control}
             name={name}
             render={({field}) => {
                 return <FormItem className="flex flex-col">
-                    <FormLabel>{label}</FormLabel>
                     <Popover>
                         <PopoverTrigger asChild>
                             <FormControl>

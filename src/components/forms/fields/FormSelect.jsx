@@ -1,24 +1,23 @@
-import {FormControl, FormDescription, FormField, FormItem, FormLabel, FormMessage} from "@/components/ui/form.jsx";
+import {FormControl, FormDescription, FormField, FormItem, FormMessage} from "@/components/ui/form.jsx";
 import {Select, SelectContent, SelectItem, SelectTrigger, SelectValue} from "@/components/ui/select.jsx";
 import PropTypes from "prop-types";
+import {useFormContext} from "react-hook-form";
 
 FormSelect.propTypes = {
-    form: PropTypes.object,
     name: PropTypes.string,
-    label: PropTypes.string,
     list: PropTypes.array,
     placeholder: PropTypes.string,
     description: PropTypes.string,
 };
 
-export function FormSelect({form, name, label, list, placeholder, description}) {
+export function FormSelect({name, list, placeholder, description}) {
+    const {control} = useFormContext()
     return (
         <FormField
-            control={form.control}
+            control={control}
             name={name}
             render={({field}) => (
                 <FormItem>
-                    <FormLabel>{label}</FormLabel>
                     <Select onValueChange={field.onChange} defaultValue={field.value}>
                         <FormControl>
                             <SelectTrigger>

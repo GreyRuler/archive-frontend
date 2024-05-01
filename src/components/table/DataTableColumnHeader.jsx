@@ -10,7 +10,7 @@ DataTableColumnHeader.propTypes = {
 
 export function DataTableColumnHeader({column, className}) {
     if (!column.getCanSort()) {
-        return <div className={cn(className)}>{column.columnDef.title}</div>
+        return <div className={cn(className, 'text-center')}>{column.columnDef.title}</div>
     }
 
     return (

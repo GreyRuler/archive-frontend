@@ -1,4 +1,4 @@
-import {useInventoryContext} from "@/context/InventoryContext.jsx";
+import {useWarehouseItemContext} from "@/context/WarehouseItemContext.jsx";
 import {useForm} from "react-hook-form";
 import {zodResolver} from "@hookform/resolvers/zod";
 import {z} from "zod";
@@ -16,7 +16,7 @@ FormDeduct.propTypes = {
 }
 
 export default function FormDeduct({isOpen, onOpenChange}) {
-    const item = useInventoryContext()
+    const item = useWarehouseItemContext()
     const form = useForm({
         resolver: zodResolver(z.object({
             count: z.coerce.number()
@@ -32,7 +32,8 @@ export default function FormDeduct({isOpen, onOpenChange}) {
 
     async function submit(data) {
         const {count, date} = data
-        db.inventory.update(item.id, {
+        db.warehouse.update(item.id, {
+            decrement: item.decrement + count,
             history: [...item.history, {
                 id: uuid4(),
                 delta: -count,

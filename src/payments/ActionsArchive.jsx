@@ -20,7 +20,7 @@ export function ActionsArchive({id}) {
     const [isOpen, setOpen] = useState(false)
 
     function onArchive () {
-        db.inventory.update(id, {
+        db.warehouse.update(id, {
             isArchived: 0
         })
     }

@@ -10,18 +10,11 @@ import {
 import {Table, TableBody, TableCell, TableHead, TableHeader, TableRow,} from "@/components/ui/table.jsx"
 
 import PropTypes from 'prop-types';
-import {Button} from "@/components/ui/button.jsx";
 import {useState} from "react";
-import {
-    DropdownMenu,
-    DropdownMenuCheckboxItem,
-    DropdownMenuContent,
-    DropdownMenuTrigger
-} from "@/components/ui/dropdown-menu.jsx";
-import {ChevronDown} from "lucide-react";
 import DebouncedInput from "@/components/table/DebouncedInput.jsx";
 import {DataTablePagination} from "@/components/table/DataTablePagination.jsx";
 import {cn} from "@/lib/utils.js";
+import DataTableRowForm from "@/components/table/DataTableRowForm.jsx";
 
 DataTable.propTypes = {
     columns: PropTypes.array.isRequired,
@@ -31,10 +24,6 @@ DataTable.propTypes = {
 export function DataTable({columns, data}) {
     const [sorting, setSorting] = useState([])
     const [columnFilters, setColumnFilters] = useState([])
-    const [columnVisibility, setColumnVisibility] = useState(/*{
-        itemNumberOld: false,
-        preciousMetals: false,
-    }*/)
 
     const equalsFilter = (row, columnId, value) => {
         return row.getValue(columnId) === value
@@ -52,11 +41,9 @@ export function DataTable({columns, data}) {
         getSortedRowModel: getSortedRowModel(),
         onColumnFiltersChange: setColumnFilters,
         getFilteredRowModel: getFilteredRowModel(),
-        onColumnVisibilityChange: setColumnVisibility,
         state: {
             sorting,
             columnFilters,
-            columnVisibility,
         },
     })
 
@@ -68,35 +55,9 @@ export function DataTable({columns, data}) {
                         value=''
                         onChange={value => table.setGlobalFilter(value)}
                         className="w-[20rem]"
-                        placeholder="Поиск по всем колонкам..."
+                        placeholder="Поиск по всему складу..."
                     />
                 </div>
-                <DropdownMenu>
-                    <DropdownMenuTrigger asChild>
-                        <Button variant="outline" className="ml-auto">
-                            Колонки
-                            <ChevronDown className="ml-2 h-4 w-4"/>
-                        </Button>
-                    </DropdownMenuTrigger>
-                    <DropdownMenuContent align="end">
-                        {table
-                            .getAllColumns()
-                            .filter((column) => column.getCanHide())
-                            .map((column) => {
-                                return (
-                                    <DropdownMenuCheckboxItem
-                                        key={column.id}
-                                        checked={column.getIsVisible()}
-                                        onCheckedChange={(value) =>
-                                            column.toggleVisibility(!!value)
-                                        }
-                                    >
-                                        {column.columnDef.title}
-                                    </DropdownMenuCheckboxItem>
-                                )
-                            })}
-                    </DropdownMenuContent>
-                </DropdownMenu>
             </div>
             <div className="rounded-md border relative flex-1 w-full overflow-y-auto">
                 <Table className={cn(
@@ -106,22 +67,26 @@ export function DataTable({columns, data}) {
                     <TableHeader className='sticky top-0 bg-white'>
                         {table.getHeaderGroups().map((headerGroup) => (
                             <TableRow key={headerGroup.id} className='divide-x'>
-                                {headerGroup.headers.map((header) => {
-                                    return (
-                                        <TableHead key={header.id} className='p-2 px-5'>
-                                            {header.isPlaceholder
-                                                ? null
-                                                : flexRender(
-                                                    header.column.columnDef.header,
-                                                    header.getContext()
-                                                )}
+                                {headerGroup.headers
+                                    .filter((header) => {
+                                        const {depth, column} = header
+                                        return depth === 1 || column.depth
+                                    })
+                                    .map((header) => {
+                                        return <TableHead key={header.id} className='p-2 px-5'
+                                                          colSpan={header.colSpan}
+                                                          rowSpan={header.colSpan === 1 && header.depth === 1 ? 2 : 1}>
+                                            {flexRender(
+                                                header.column.columnDef.header,
+                                                header.getContext()
+                                            )}
                                         </TableHead>
-                                    )
-                                })}
+                                    })}
                             </TableRow>
                         ))}
+                        <DataTableRowForm/>
                     </TableHeader>
-                    <TableBody className='z-0'>
+                    <TableBody className={'z-0'}>
                         {table.getRowModel().rows?.length ? (
                             table.getRowModel().rows.map((row) => (
                                 <TableRow
@@ -146,7 +111,7 @@ export function DataTable({columns, data}) {
                     </TableBody>
                 </Table>
             </div>
-            <div className="space-x-2 py-4">
+            <div className="space-x-2 pt-4">
                 <DataTablePagination table={table}/>
             </div>
         </div>

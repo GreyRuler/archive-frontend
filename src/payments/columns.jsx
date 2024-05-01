@@ -1,22 +1,32 @@
 import {DataTableColumnHeader} from "@/components/table/DataTableColumnHeader.jsx";
 import FilterHeaderDatalist from "@/components/table/FilterHeaderDatalist.jsx";
 import DebouncedInput from "@/components/table/DebouncedInput.jsx";
-import FormAdd from "@/components/forms/FormAdd.jsx";
-import {ActionsInventory} from "@/payments/ActionsInventory.jsx";
+import {ActionsWarehouseItem} from "@/payments/ActionsWarehouseItem.jsx";
 import {ActionsArchive} from "@/payments/ActionsArchive.jsx";
 import {Wrench} from 'lucide-react';
 import {Badge} from "@/components/ui/badge.jsx";
 import {v4 as uuidv4} from "uuid";
-import {InventoryProvider} from "@/context/InventoryContext.jsx";
+import {WarehouseItemProvider} from "@/context/WarehouseItemContext.jsx";
+import {formatDate} from "@/lib/format.js";
+import {createColumnHelper} from "@tanstack/react-table";
+import DataTableCell from "@/components/table/DataTableCell.jsx";
+import {FormSelect} from "@/components/forms/fields/FormSelect.jsx";
+import {warehouses} from "@/lib/warehouses.js";
+import {FormInput} from "@/components/forms/fields/FormInput.jsx";
+import {units} from "@/lib/units.js";
+import {FormDateInput} from "@/components/forms/fields/FormDateInput.jsx";
+import MultiselectForm from "@/components/forms/fields/MultiselectForm.jsx";
+import metals from "@/lib/metals.js";
 
-const columnActionsInventory = {
+const columnHelper = createColumnHelper()
+
+const columnActionsWarehouse = {
     id: "actions",
     enableHiding: false,
-    header: () => <FormAdd/>,
     cell: ({row: {original}}) => (
-        <InventoryProvider value={original}>
-            <ActionsInventory key={uuidv4()}/>
-        </InventoryProvider>
+        <WarehouseItemProvider value={original}>
+            <ActionsWarehouseItem key={uuidv4()}/>
+        </WarehouseItemProvider>
     ),
 }
 
@@ -28,19 +38,25 @@ const columnActionsArchive = {
 }
 
 export const columns = [
-    {
-        accessorKey: "warehouse",
+    columnHelper.accessor('warehouse', {
         header: ({column}) => (
             <div>
                 <DataTableColumnHeader column={column}/>
                 <FilterHeaderDatalist column={column}/>
             </div>
         ),
-        title: 'Склад учета',
+        title: 'Категория',
         filterFn: 'equalsFilter',
-    },
-    {
-        accessorKey: "itemNumber",
+        cell: ({row: {original}, getValue}) =>
+            <WarehouseItemProvider value={original}>
+                <DataTableCell
+                    view={<span>{getValue()}</span>}
+                    field={
+                    <FormSelect name={'warehouse'} list={warehouses}/>
+                }/>
+            </WarehouseItemProvider>
+    }),
+    columnHelper.accessor('itemNumber', {
         header: ({column}) => (
             <div>
                 <DataTableColumnHeader column={column}/>
@@ -51,10 +67,17 @@ export const columns = [
                 />
             </div>
         ),
-        title: 'Номенклатурный номер'
-    },
-    {
-        accessorKey: "itemNumberOld",
+        title: 'Номенклатурный номер',
+        cell: ({row: {original}, getValue}) =>
+            <WarehouseItemProvider value={original}>
+                <DataTableCell
+                    view={<span>{getValue()}</span>}
+                    field={
+                        <FormInput name={'itemNumber'}/>
+                    }/>
+            </WarehouseItemProvider>
+    }),
+    columnHelper.accessor('itemNumberOld', {
         header: ({column}) => (
             <div>
                 <DataTableColumnHeader column={column}/>
@@ -65,10 +88,17 @@ export const columns = [
                 />
             </div>
         ),
-        title: 'Старый номенклатурный номер'
-    },
-    {
-        accessorKey: "name",
+        title: 'Старый номенклатурный номер',
+        cell: ({row: {original}, getValue}) =>
+            <WarehouseItemProvider value={original}>
+                <DataTableCell
+                    view={<span>{getValue()}</span>}
+                    field={
+                        <FormInput name={'itemNumberOld'}/>
+                    }/>
+            </WarehouseItemProvider>
+    }),
+    columnHelper.accessor('name', {
         header: ({column}) => (
             <div>
                 <DataTableColumnHeader column={column}/>
@@ -79,22 +109,67 @@ export const columns = [
                 />
             </div>
         ),
-        title: 'Наименование'
-    },
-    {
-        accessorKey: "initialCount",
+        title: 'Наименование',
+        cell: ({row: {original}, getValue}) =>
+            <WarehouseItemProvider value={original}>
+                <DataTableCell
+                    view={<span>{getValue()}</span>}
+                    field={
+                        <FormInput name={'name'}/>
+                    }/>
+            </WarehouseItemProvider>
+    }),
+    columnHelper.group({
+        id: 'count',
         header: ({column}) => (
             <DataTableColumnHeader column={column}/>
         ),
         title: 'Количество',
-        cell: ({row: {original: {count, initialCount}}}) => `${count}/${initialCount}`,
-    },
+        columns: [
+            columnHelper.accessor('amount', {
+                title: 'Получено',
+                header: ({column}) => (
+                    <DataTableColumnHeader column={column}/>
+                ),
+                cell: ({row: {original}, getValue}) =>
+                    <WarehouseItemProvider value={original}>
+                        <DataTableCell
+                            view={<span>{getValue()}</span>}
+                            field={
+                                <FormInput name={'amount'} type='number' placeholder={'Получено'}/>
+                            }/>
+                    </WarehouseItemProvider>
+            }),
+            columnHelper.accessor('decrement', {
+                title: 'Израсходовано',
+                header: ({column}) => (
+                    <DataTableColumnHeader column={column}/>
+                ),
+                cell: ({getValue}) => <span>{getValue()}</span>
+            }),
+            columnHelper.accessor('difference', {
+                title: 'Осталось',
+                header: ({column}) => (
+                    <DataTableColumnHeader column={column}/>
+                ),
+                cell: ({row: {original: {amount, decrement}}}) => <span>{amount - decrement}</span>
+            }),
+        ]
+    }),
     {
         accessorKey: "unit",
         header: ({column}) => (
             <DataTableColumnHeader column={column}/>
         ),
         title: 'Единица измерения',
+        cell: ({row: {original}, getValue}) =>
+            <WarehouseItemProvider value={original}>
+                <DataTableCell
+                    view={<span>{getValue()}</span>}
+                    field={
+                        <FormSelect name={'unit'} list={units}/>
+                    }/>
+            </WarehouseItemProvider>
     },
     {
         accessorKey: "date",
@@ -103,24 +178,36 @@ export const columns = [
         ),
         title: 'Дата поступления',
         sortingFn: 'datetime',
+        cell: ({row: {original}}) =>
+            <WarehouseItemProvider value={original}>
+                <DataTableCell
+                    view={<span>{formatDate(original.date)}</span>}
+                    field={
+                        <FormDateInput name={'date'}/>
+                    }/>
+            </WarehouseItemProvider>
     },
     {
         accessorKey: "metals",
-        enableHiding: false,
         header: ({column}) => (
             <DataTableColumnHeader column={column}/>
         ),
         title: 'Содержание драгметаллов',
-        cell: ({row: {original: {metals}}}) => {
-            return <div className="flex gap-2">
-                {metals.map(({name, value}) => <Badge key={uuidv4()}>{name} {value}</Badge>)}
-            </div>
-        }
+        cell: ({row: {original}}) =>
+            <WarehouseItemProvider value={original}>
+                <DataTableCell
+                    view={<div className="flex gap-2">
+                        {original.metals.map(({name, value}) => <Badge key={uuidv4()}>{name}<br/>{value}</Badge>)}
+                    </div>}
+                    field={
+                        <MultiselectForm name={'metals'} list={metals}/>
+                    }/>
+            </WarehouseItemProvider>,
     }
 ]
 
-export const columnsInventory = [
-    columnActionsInventory,
+export const columnsWarehouse = [
+    columnActionsWarehouse,
     ...columns,
 ]
 
