@@ -19,7 +19,7 @@ export function Modal({title, form, submit, children, isOpen, onOpenChange}) {
     }
 
     return (
-        <Dialog open={isOpen} onOpenChange={onOpenChange}>
+        <Dialog open={isOpen} onOpenChange={onOpenChange} modal={true}>
             <DialogContent className='flex flex-col max-w-4xl max-h-[40rem]'>
                 <DialogHeader>
                     <DialogTitle>{title}</DialogTitle>

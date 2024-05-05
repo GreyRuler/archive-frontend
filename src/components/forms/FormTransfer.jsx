@@ -39,7 +39,7 @@ export default function FormTransfer({isOpen, onOpenChange}) {
             history: [...item.history, {
                 id: uuid4(),
                 employer,
-                delta: -count,
+                delta: count,
                 date,
                 return: false,
                 actionType: ActionTypes.TRANSFER

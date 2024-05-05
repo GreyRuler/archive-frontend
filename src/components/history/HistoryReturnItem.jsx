@@ -15,7 +15,7 @@ export default function HistoryReturnItem({item}) {
                 <span className={'text-xs'}>{formatDate(item.date)}</span>
             </div>
             <div className={'flex items-center ml-4'}>
-                <span className={'text-green-600'}>+{item.delta}</span>
+                <span className={'text-red-600'}>-{item.delta}</span>
             </div>
         </li>
     )

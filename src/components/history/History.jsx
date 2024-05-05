@@ -10,6 +10,7 @@ import {
 import {Button} from "@/components/ui/button.jsx";
 import PropTypes from "prop-types";
 import HistoryList from "@/components/history/HistoryList.jsx";
+import {ScrollArea} from "@/components/ui/scroll-area.jsx";
 
 History.propTypes = {
     isOpen: PropTypes.bool,
@@ -20,14 +21,16 @@ History.propTypes = {
 export default function History({isOpen, onOpenChange, history}) {
     return (
         <Dialog open={isOpen} onOpenChange={onOpenChange}>
-            <DialogContent className="sm:max-w-md">
+            <DialogContent className="sm:max-w-md max-h-[80%]">
                 <DialogHeader>
                     <DialogTitle>История</DialogTitle>
                     <DialogDescription>
                         Здесь вы найдете информацию о списаниях, передачах и возвратах на склад.
                     </DialogDescription>
                 </DialogHeader>
-                <HistoryList items={history}/>
+                <ScrollArea className="h-[80vh] rounded-md border px-3">
+                    <HistoryList items={history}/>
+                </ScrollArea>
                 <DialogFooter className="sm:justify-start">
                     <DialogClose asChild>
                         <Button type="button" variant="secondary">Закрыть</Button>

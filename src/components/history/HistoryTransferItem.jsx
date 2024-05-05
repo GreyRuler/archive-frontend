@@ -16,7 +16,7 @@ export default function HistoryTransferItem({item}) {
                 <span className={'text-xs'}>{formatDate(item.date)}</span>
             </div>
             {item.return
-                ? <span className={'text-red-600 text-base'}>{item.delta}</span>
+                ? <span className={'text-green-600 text-base'}>+{item.delta}</span>
                 : <FormReturnItem delta={item.delta} employer={item.employer}  historyId={item.id}/>}
         </li>
     )

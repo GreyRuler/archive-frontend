@@ -40,9 +40,9 @@ export default function DataTableCell({view, field}) {
                     </Button>
                 </div>
             </form>
-        </Form> : <div className={'flex items-center justify-between peer'}>
+        </Form> : <div className={'flex items-center justify-between group/item'}>
             {view}
-            <Button variant="ghost" className="h-8 w-8 p-0 invisible peer-hover:visible" onClick={() => setEdit(true)}>
+            <Button variant="ghost" className="h-8 w-8 p-0 invisible group-hover/item:visible" onClick={() => setEdit(true)}>
                 <Pencil width={16} height={16}/>
             </Button>
         </div>
