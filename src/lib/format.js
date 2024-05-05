@@ -4,5 +4,9 @@ import {format} from "date-fns";
 const formatStr = "dd.MM.yyyy"
 
 export function formatDate(date) {
-    return format(date, formatStr, {locale: ru})
+    try {
+        return format(date, formatStr, {locale: ru})
+    } catch (e) {
+        return date
+    }
 }
